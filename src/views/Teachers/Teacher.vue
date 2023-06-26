@@ -349,8 +349,7 @@
                     <p class="bg-red-100 rounded-[5px] p-1">{{ i.phone_number }}</p>
                   </td>
                   <td class="text-center font-medium text-green-800 px-8 py-2">
-                    <p v-show="i.roles.length" class="bg-green-100 rounded-[5px] p-1">{{ i.roles }}</p>
-                    <p v-show="!i.roles.length" class="bg-green-100 rounded-[5px] p-1">Mavjud emas</p>
+                    <p class="bg-green-100 rounded-[5px] p-1">{{ i.roles }}</p>
                   </td>
                   <td class="text-center font-medium px-8 py-3">
                     <button

@@ -45,7 +45,7 @@
                       ></i></span
                   ></b>
                   <p
-                    class="w-8 h-8 rounded-full absolute top-1 -z-10 duration-1000"
+                    class="w-8 h-8 rounded-full absolute top-10 -z-10 duration-1000"
                     :class="{
                       'translate-x-full bg-black': !navbar.userNav,
                       'bg-white': navbar.userNav,

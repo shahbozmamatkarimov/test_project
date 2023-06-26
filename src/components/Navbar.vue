@@ -32,8 +32,8 @@
         <div class="flex items-center">
           <div class="flex items-center ml-3">
             <ul class="flex sm:gap-5 text-2xl">
-              <li class="relative">
-                <div @click="navbar.setMode()">
+              <li>
+                <div class="relative" @click="navbar.setMode()">
                   <b class="mr-5 cursor-pointer border-2 rounded-full"
                     ><span class="rounded-full"
                       ><i

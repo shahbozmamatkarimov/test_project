@@ -1,8 +1,6 @@
 <script>
 import CanvasJSChart from "../assets/CanvasJSVueComponent.vue";
 import { useNavStore } from "../stores/toggle";
-
-import * as CanvasJS from "@canvasjs/charts";
 export default {
   components: {
     CanvasJSChart,
@@ -22,6 +20,7 @@ export default {
         toolTip: {
           shared: true,
         },
+        responsive: true,
         legend: {
           cursor: "pointer",
           itemclick: function (e) {
@@ -77,6 +76,7 @@ export default {
         theme: "light2",
         backgroundColor: "#203843",
         exportEnabled: true,
+        responsive: true,
         title: {
           text: "Overview",
           horizontalAlign: "left",
@@ -160,15 +160,7 @@ export default {
 </script>
 <template>
   <div>
-    <CanvasJSChart
-      v-show="!navbar.userNav"
-      :options="options"
-      :styles="styleOptions"
-    />
-    <CanvasJSChart
-      v-show="navbar.userNav"
-      :options="darkOptions"
-      :styles="styleOptions"
-    />
+    <CanvasJSChart v-show="!navbar.userNav" :options="options" :styles="styleOptions" />
+    <CanvasJSChart v-show="navbar.userNav" :options="darkOptions" :styles="styleOptions" />
   </div>
 </template>

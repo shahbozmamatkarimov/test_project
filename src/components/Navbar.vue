@@ -9,11 +9,16 @@
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center">
-          <button><i @click="sidebar.sidebar = !sidebar.sidebar" class="bx bx-menu text-2xl sm:hidden block"></i></button>
+          <button>
+            <i
+              @click="sidebar.sidebar = !sidebar.sidebar"
+              class="bx bx-menu text-2xl sm:hidden block"
+            ></i>
+          </button>
           <div class="flex items-center justify-start">
             <router-link to="/" class="flex ml-2 md:mr-24">
               <img
-                src="../../public/TATU.jpg"
+                src="../assets/img/TATU.jpg"
                 class="h-8 mr-3 rounded-full"
                 alt="FlowBite Logo"
               />
@@ -26,21 +31,21 @@
         </div>
         <div class="flex items-center">
           <div class="flex items-center ml-3">
-            <ul class="flex sm:gap-5 text-2xl">
+            <ul class="relative flex sm:gap-5 text-2xl">
               <li>
-                <div>
+                <div @click="navbar.setMode()">
                   <b class="mr-5 cursor-pointer border-2 rounded-full"
-                    ><span class="rounded-full" @click="navbar.setDarkMode()"
+                    ><span class="rounded-full"
                       ><i
                         class="bx bxs-moon p-1 text-yellow-300 rounded-full"
                       ></i></span
-                    ><span @click="navbar.setLightMode()" class="rounded-full"
+                    ><span class="rounded-full"
                       ><i
                         class="bx bxs-sun rounded-full p-1 text-yellow-300"
                       ></i></span
                   ></b>
                   <p
-                    class="w-8 h-8 rounded-full absolute top-3 -z-10 duration-1000"
+                    class="w-8 h-8 rounded-full absolute top-0 -z-10 duration-1000"
                     :class="{
                       'translate-x-full bg-black': !navbar.userNav,
                       'bg-white': navbar.userNav,
@@ -97,7 +102,7 @@
 import { reactive } from "vue";
 import { ref } from "vue";
 import { useNavStore } from "../stores/toggle.js";
-import { useSidebarStore} from "../stores/sidebar.js";
+import { useSidebarStore } from "../stores/sidebar.js";
 const sidebar = useSidebarStore();
 const navbar = useNavStore();
 

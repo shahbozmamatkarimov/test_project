@@ -2,16 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-
-body {
+body{
     overflow: hidden;
 }
 
-* {
+*{
     transition-duration: 0.2s;
 }
 
-::-webkit-scrollbar {
+::-webkit-scrollbar{
     width: 2px;
-    background: #000;
+    height: 0;
 }

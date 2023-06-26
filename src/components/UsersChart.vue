@@ -14,6 +14,7 @@ export default {
         animationEnabled: true,
         backgroundColor: "#FFF",
         exportEnabled: true,
+        responsive: true,
         title: {
           text: "Number of Students",
           horizontalAlign: "left",
@@ -72,6 +73,7 @@ export default {
         animationEnabled: true,
         backgroundColor: "#203843",
         exportEnabled: true,
+        responsive: true,
         title: {
           text: "Number of Students",
           horizontalAlign: "left",
@@ -159,17 +161,7 @@ export default {
 </script>
 <template>
   <div>
-    <CanvasJSChart
-      v-show="!navbar.userNav"
-      :options="options"
-      :style="styleOptions"
-      @chart-ref="chartInstance"
-    />
-    <CanvasJSChart
-      v-show="navbar.userNav"
-      :options="darkOptions"
-      :style="styleOptions"
-      @chart-ref="chartInstance"
-    />
+    <CanvasJSChart v-show="!navbar.userNav" :options="options" :style="styleOptions" @chart-ref="chartInstance" />
+    <CanvasJSChart v-show="navbar.userNav" :options="darkOptions" :style="styleOptions" @chart-ref="chartInstance" />
   </div>
 </template>

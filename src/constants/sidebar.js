@@ -37,7 +37,7 @@ export const header = [
     {
         id: 5,
         title: "Fanlar",
-        link: "/sciences",
+        link: "/subjects",
         icon: "bx bxs-book-bookmark",
         role: [],
     },

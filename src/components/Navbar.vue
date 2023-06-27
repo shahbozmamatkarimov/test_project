@@ -35,24 +35,38 @@
               <li>
                 <div class="relative" @click="navbar.setMode()">
                   <b
-                    class="flex mr-5 w-[4.2rem] h-9 cursor-pointer border-2 rounded-full"
+                    class="flex mr-5 w-[4.1rem] items-center justify-between h-9 cursor-pointer border-2 rounded-full"
                     ><span class="rounded-full"
                       ><i
-                        class="bx bxs-moon md:pl-1 md:pr-1 pr-[2px] md:pt-0 pt-[2px] text-yellow-300 rounded-full"
+                        class="bx bxs-moon pl-1 text-yellow-300 rounded-full"
                       ></i></span
                     ><span class="rounded-full"
                       ><i
-                        class="bx bxs-sun md:pl-[5px] pl-[1px] pt-[3px] md:pt-[5px] rounded-full text-yellow-300"
+                        class="bx bxs-sun px-1 rounded-full text-yellow-300"
                       ></i></span
                   ></b>
                   <p
                     class="w-8 h-8 rounded-full absolute top-[2px] -z-10 duration-1000"
                     :class="{
-                      'translate-x-full bg-black ml-0.5': !navbar.userNav,
+                      'translate-x-full bg-black': !navbar.userNav,
                       'bg-white': navbar.userNav,
                     }"
                   ></p>
                 </div>
+              </li>
+              <li>
+                <i class="bx bxs-bell pr-2 icon"></i>
+              </li>
+              <li>
+                <i class="bx bxs-dashboard pr-2 icon"></i>
+              </li>
+              <li>
+                <img
+                  @click="store.userToggle = !store.userToggle"
+                  class="w-8 h-8 rounded-full bg-gray-800 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 cursor-pointer"
+                  src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                  alt="user"
+                />
               </li>
               <li>
                 <i class="bx bxs-bell pr-2 icon"></i>

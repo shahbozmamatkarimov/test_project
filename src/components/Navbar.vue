@@ -41,7 +41,7 @@
                       ></i></span
                     ><span class="rounded-full"
                       ><i
-                        class="bx bxs-sun pl-[5px] pt-[5px] rounded-full text-yellow-300"
+                        class="bx bxs-sun lg:pl-[5px] lg:pt-[5px] rounded-full text-yellow-300"
                       ></i></span
                   ></b>
                   <p

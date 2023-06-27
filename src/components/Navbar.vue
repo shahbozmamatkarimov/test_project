@@ -31,21 +31,21 @@
         </div>
         <div class="flex items-center">
           <div class="flex items-center ml-3">
-            <ul class="flex sm:gap-5 text-2xl">
+            <ul class="flex items-center sm:gap-5 text-2xl">
               <li>
                 <div class="relative" @click="navbar.setMode()">
                   <b class="mr-5 cursor-pointer border-2 rounded-full"
                     ><span class="rounded-full"
                       ><i
-                        class="bx bxs-moon p-1 text-yellow-300 rounded-full"
+                        class="bx bxs-moon text-yellow-300 rounded-full"
                       ></i></span
                     ><span class="rounded-full"
                       ><i
-                        class="bx bxs-sun rounded-full p-1 text-yellow-300"
+                        class="bx bxs-sun rounded-full text-yellow-300"
                       ></i></span
                   ></b>
                   <p
-                    class="w-8 h-8 rounded-full absolute sm:top-0 top-1 left-2 -z-10 duration-1000"
+                    class="w-8 h-8 rounded-full absolute top-0 -z-10 duration-1000"
                     :class="{
                       'translate-x-full bg-black': !navbar.userNav,
                       'bg-white': navbar.userNav,

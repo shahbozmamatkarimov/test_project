@@ -38,7 +38,7 @@
                     class="flex mr-5 w-[4.2rem] h-9 cursor-pointer border-2 rounded-full"
                     ><span class="rounded-full"
                       ><i
-                        class="bx bxs-moon md:pl-1 md:pr-1 pr-[3px] md:pt-0 pt-[2px] text-yellow-300 rounded-full"
+                        class="bx bxs-moon md:pl-1 md:pr-1 pr-[2px] md:pt-0 pt-[2px] text-yellow-300 rounded-full"
                       ></i></span
                     ><span class="rounded-full"
                       ><i

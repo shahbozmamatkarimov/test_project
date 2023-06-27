@@ -34,14 +34,15 @@
             <ul class="flex items-center sm:gap-5 text-2xl">
               <li>
                 <div class="relative" @click="navbar.setMode()">
-                  <b class="flex mr-5 w-[4.2rem] h-9 cursor-pointer border-2 rounded-full"
+                  <b
+                    class="flex mr-5 w-[4.2rem] h-9 cursor-pointer border-2 rounded-full"
                     ><span class="rounded-full"
                       ><i
-                        class="bx bxs-moon px-1 text-yellow-300 rounded-full"
+                        class="bx bxs-moon md:pl-1 md:pr-1 pr-[3px] md:pt-0 pt-[2px] text-yellow-300 rounded-full"
                       ></i></span
                     ><span class="rounded-full"
                       ><i
-                        class="bx bxs-sun lg:pl-[5px] pl-[1px] pt-[3px] lg:pt-[5px] rounded-full text-yellow-300"
+                        class="bx bxs-sun md:pl-[5px] pl-[1px] pt-[3px] md:pt-[5px] rounded-full text-yellow-300"
                       ></i></span
                   ></b>
                   <p

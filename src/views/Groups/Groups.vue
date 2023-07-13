@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-2">
+  <div @click="store.filter_show = false" class="container mx-auto px-2">
     <!-- ----------------------------------------- MODAL -------------------------------------------------------- -->
 
     <!-- Main modal -->
@@ -125,7 +125,7 @@
               class="text-lg"
               :class="navbar.userNav ? 'text-white' : 'text-black'"
             >
-              Guruhni tahrirlash
+              Guruhni o'zgartirish
             </h3>
             <button
               @click="
@@ -176,7 +176,7 @@
                 >
                 <input
                   v-model="edit.start_date"
-                  type="text"
+                  type="date"
                   name="description"
                   id="description"
                   class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5"
@@ -197,7 +197,7 @@
                   type="submit"
                   class="btnAdd cursor-pointer text-white inline-flex items-center bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 >
-                  Tahrirlash
+                  O'zgartirish
                 </button>
               </div>
             </div>
@@ -258,7 +258,12 @@
             <div class="grid font-medium gap-4 mb-4 grid-cols-1">
               <div>
                 <div></div>
-                <h1 class="text-2xl">Siz guruhni o'chirishni xohlaysizmi?</h1>
+                <h1
+                  class="text-2xl"
+                  :class="navbar.userNav ? 'text-white' : 'text-black'"
+                >
+                  Siz guruhni o'chirishni xohlaysizmi?
+                </h1>
               </div>
               <div
                 class="w-full flex items-center justify-between border-t pt-5 mt-5"
@@ -288,14 +293,14 @@
 
     <section class="pt-4" :class="{ 'text-white': navbar.userNav }">
       <!------------------------------------------- Placeholder ------------------------------------------->
-      <div v-show="!store.allProducts">
+      <div v-show="!store.PageProduct">
         <Placeholder2 />
       </div>
       <!------------------------------------------- Placeholder ------------------------------------------->
 
       <!------------------------------------------- Search ------------------------------------------->
 
-      <div v-show="store.allProducts" class="w-full max-w-screen">
+      <div v-show="store.PageProduct" class="w-full max-w-screen">
         <!-- Start coding here -->
         <div
           class="shadow rounded-xl flex flex-col lg:flex-row items-center justify-between lg:space-x-4 p-4 mb-4"
@@ -309,6 +314,7 @@
               class="lg:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3"
             >
               <button
+                v-show="!store.guard"
                 @click="toggleModal"
                 id=""
                 type="button"
@@ -342,11 +348,33 @@
                   </svg>
                 </div>
                 <input
-                  type="text"
+                  v-model="store.filter"
+                  @input="
+                    store.filter_show = true;
+                    searchFunc();
+                  "
+                  type="search"
                   id="simple-search"
                   class="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2"
-                  placeholder="Izlash uchun yozing .."
+                  placeholder="Qidirish..."
                 />
+                <ul
+                  v-show="store.filter_show"
+                  class="absolute z-10 max-h-80 overflow-y-auto overflow-hidden py-1 text-gray-600 rounded bg-white w-full"
+                  :class="{ hidden: !store.searchList.length }"
+                >
+                  <li
+                    class="hover:bg-gray-100 cursor-pointer pl-2"
+                    v-for="(i, index) in store.searchList"
+                    :key="index"
+                    @click="
+                      store.filter = i.name;
+                      searchFunc();
+                    "
+                  >
+                    {{ i.name }}
+                  </li>
+                </ul>
               </div>
             </form>
           </div>
@@ -368,18 +396,18 @@
                   <th scope="col" class="text-center py-3">
                     Boshlanish sanasi
                   </th>
-                  <th scope="col" class="text-center py-3">Guruhlar</th>
                   <th scope="col" class="text-center py-3">To'liq</th>
                   <th></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody v-show="!store.error">
                 <tr
                   class="border-b"
                   :class="
                     navbar.userNav ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
                   "
-                  v-for="i in store.allProducts"
+                  v-show="!store.searchList.length"
+                  v-for="i in store.PageProduct"
                   :key="i.id"
                 >
                   <th
@@ -388,24 +416,71 @@
                   >
                     {{ i.name }}
                   </th>
-                  <td class="text-center font-medium text-green-800 px-8 py-2">
+                  <td
+                    class="text-center font-medium whitespace-nowrap text-green-800 px-8 py-2"
+                  >
                     <p class="bg-green-100 rounded-[5px] p-1">
-                      {{ i.start_date.slice(0, 10) }}
+                      {{ i.start_date?.slice(0, 10) }}
                     </p>
-                  </td>
-                  <td class="text-center font-medium text-green-800 px-8 py-2">
-                    <p v-show="i.staffs.length" class="bg-green-100 rounded-[5px] p-1">{{ i.staffs }}</p>
-                    <p v-show="!i.staffs.length" class="bg-green-100 rounded-[5px] p-1">Mavjud emas</p>
                   </td>
                   <td class="text-center font-medium px-8 py-3">
                     <button
-                      @click="enterSlug(i.id, i.name)"
+                      @click="enterSlug(i.id, i.name.toLowerCase())"
                       class="btnKirish bg-blue-600 rounded-lg px-5 py-2.5 text-white focus:ring-2"
                     >
                       Kirish
                     </button>
                   </td>
-                  <td class="text-center font-medium">
+                  <td
+                    v-show="!store.guard"
+                    class="text-center whitespace-nowrap font-medium pr-5"
+                  >
+                    <i
+                      @click="getOneProduct(i.id)"
+                      class="bx bxs-pencil bg-blue-300 text-blue-600 rounded-lg p-2 mr-3 cursor-pointer focus:ring-2"
+                    >
+                    </i>
+                    <i
+                      @click="deleteFunc(i.id)"
+                      class="bx bxs-trash bg-red-300 cursor-pointer text-red-600 rounded-lg p-2 focus:ring-2"
+                    >
+                    </i>
+                  </td>
+                </tr>
+                <tr
+                  class="border-b"
+                  :class="
+                    navbar.userNav ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+                  "
+                  v-show="store.searchList.length"
+                  v-for="i in store.searchList"
+                  :key="i.id"
+                >
+                  <th
+                    scope="row"
+                    class="text-center px-8 py-3 font-medium whitespace-nowrap"
+                  >
+                    {{ i.name }}
+                  </th>
+                  <td
+                    class="text-center font-medium whitespace-nowrap text-green-800 px-8 py-2"
+                  >
+                    <p class="bg-green-100 rounded-[5px] p-1">
+                      {{ i.start_date?.slice(0, 10) }}
+                    </p>
+                  </td>
+                  <td class="text-center font-medium px-8 py-3">
+                    <button
+                      @click="enterSlug(i.id, i.name.toLowerCase())"
+                      class="btnKirish bg-blue-600 rounded-lg px-5 py-2.5 text-white focus:ring-2"
+                    >
+                      Kirish
+                    </button>
+                  </td>
+                  <td
+                    v-show="!store.guard"
+                    class="text-center whitespace-nowrap font-medium pr-5"
+                  >
                     <i
                       @click="getOneProduct(i.id)"
                       class="bx bxs-pencil bg-blue-300 text-blue-600 rounded-lg p-2 mr-3 cursor-pointer focus:ring-2"
@@ -420,28 +495,66 @@
                 </tr>
               </tbody>
             </table>
+            <div v-show="store.error" class="flex w-full justify-center">
+              <h1 class="p-20 text-2xl font-medium">{{ store.PageProduct }}</h1>
+            </div>
           </div>
           <nav
+            v-if="!store.searchList.length"
             class="flex flex-row justify-between items-center md:items-center space-y-3 md:space-y-0 p-4"
             aria-label="Table navigation"
           >
+            <ul class="inline-flex items-stretch -space-x-px">
+              <li
+                :class="{
+                  'pointer-events-none opacity-50': store.page[0] == 1,
+                }"
+                @click="
+                  store.pagination -= 1;
+                  getProduct(store.pagination);
+                "
+                href="#"
+                class="flex font-bold text-black border-2 bg-white hover:bg-gray-300 items-center justify-center text-sm py-2 sm:mt-0 -mt-2 px-6 rounded-lg leading-tight"
+              >
+                Oldingi
+              </li>
+            </ul>
             <span class="text-sm font-normal">
               Sahifa
-              <span class="font-semibold">1 - 10</span>
+              <span class="font-semibold"
+                ><span>{{ store.page[0] * 10 - 9 }}</span> -
+                <span v-if="store.page[0] * 10 < store.page[1]">{{
+                  store.page[0] * 10
+                }}</span
+                ><span v-else>{{ store.page[1] }}</span></span
+              >
               dan
-              <span class="font-semibold">10</span>
+              <span class="font-semibold">{{ store.page[1] }}</span>
             </span>
             <ul class="inline-flex items-stretch -space-x-px">
-              <li>
-                <a
-                  href="#"
-                  class="flex font-bold text-black border-2 bg-white hover:bg-gray-300 items-center justify-center text-sm py-2 sm:mt-0 -mt-2 px-6 rounded-lg leading-tight"
-                  >Next</a
-                >
+              <li
+                :class="{
+                  'pointer-events-none opacity-50':
+                    store.page[0] * 10 >= store.page[1],
+                }"
+                @click="
+                  store.pagination += 1;
+                  getProduct(store.pagination);
+                "
+                href="#"
+                class="flex font-bold text-black border-2 bg-white hover:bg-gray-300 items-center justify-center text-sm py-2 sm:mt-0 -mt-2 px-6 rounded-lg leading-tight"
+              >
+                Keyingi
               </li>
             </ul>
           </nav>
         </div>
+      </div>
+      <div
+        v-show="store.PageProduct && store.error"
+        class="w-full max-w-screen"
+      >
+        <h1>Guruhlar ro'yhati bo'sh</h1>
       </div>
     </section>
 
@@ -456,7 +569,9 @@ import { useNavStore } from "../../stores/toggle";
 import { Placeholder2 } from "../../components";
 import { useNotificationStore } from "../../stores/notification";
 import axios from "@/services/axios";
+import { useInfoStore } from "../../stores/dashboard";
 
+const info = useInfoStore();
 const notification = useNotificationStore();
 const navbar = useNavStore();
 const router = useRouter();
@@ -470,8 +585,31 @@ const toggleModal = () => {
 };
 
 const store = reactive({
+  PageProduct: "",
+  page: [],
+  pagination: 1,
   allProducts: false,
+  error: false,
+  guard: false,
+  filter: "",
+  filter_show: false,
+  searchList: [],
 });
+
+// ---------------------------- search ------------------------------------
+function searchFunc() {
+  store.searchList = [];
+  for (let i of store.allProducts) {
+    if (i.name.toLowerCase().includes(store.filter.toLowerCase())) {
+      store.searchList.push(i);
+    }
+  }
+
+  if (!store.filter.length) {
+    store.searchList = [];
+  }
+}
+// ---------------------------- search end ------------------------------------
 
 function enterSlug(id, name) {
   router.push(`./groups/${id}/${name}`);
@@ -513,15 +651,41 @@ const remove = reactive({
 });
 
 // ----------------------------------- axios --------------------------------
-const getProduct = () => {
+const getAllProduct = () => {
   axios
-    .get("/group")
+    .get("/group", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
     .then((res) => {
-      console.log(res.data);
       store.allProducts = res.data;
+      store.error = false;
     })
     .catch((error) => {
-      console.log("error", error);
+      store.allProducts = error.response.data.message;
+      store.error = true;
+    });
+};
+
+const getProduct = (page) => {
+  axios
+    .get(`/group/page?page=${page}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    .then((res) => {
+      console.log(res.data);
+      store.PageProduct = res.data?.data?.records;
+      const pagination = res.data?.data?.pagination;
+      store.page = [];
+      store.page.push(pagination.currentPage, pagination.total_count);
+      store.error = false;
+    })
+    .catch((error) => {
+      store.PageProduct = error.response.data.message;
+      store.error = true;
     });
 };
 
@@ -529,12 +693,12 @@ const getOneProduct = (id) => {
   axios
     .get(`/group/${id}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
     .then((res) => {
       edit.name = res.data.name;
-      edit.start_date = res.data.start_date.slice(0,10);
+      edit.start_date = res.data.start_date.slice(0, 10);
       edit.id = id;
       edit.toggle = true;
     })
@@ -551,24 +715,18 @@ const createProduct = () => {
   axios
     .post("/group", data, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
     .then((res) => {
-      console.log(res.data.statusCode);
-      notification.success("Guruh qo'shildi");
-      getProduct();
+      notification.success(res.data.message);
+      info.getGroup();
+      getProduct(store.pagination);
       cancelFunc();
     })
     .catch((error) => {
-      if (error.response.data.statusCode == 400) {
-        console.log(error.response.data.message);
-        notification.warning(error.response.data.message);
-      } else if (error.response.data.statusCode == 401) {
-        console.log(error.response.data.message);
-        notification.warning(error.response.data.message);
-      }
-      console.log("error", error);
+      notification.warning(error.response.data.message);
+      console.log(error);
     });
 };
 
@@ -580,23 +738,20 @@ const editProduct = () => {
   axios
     .patch(`/group/${edit.id}`, data, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
     .then((res) => {
-      console.log(res.data.statusCode);
-      notification.success("Guruh tahrirlandi");
-      getProduct();
+      notification.success(res.data.message);
+      getProduct(store.pagination);
       edit.name = "";
       edit.start_date = "";
       edit.toggle = false;
     })
     .catch((error) => {
       if (error.response.data.statusCode == 400) {
-        console.log(error.response.data.message);
         notification.warning(error.response.data.message);
       } else if (error.response.data.statusCode == 401) {
-        console.log(error.response.data.message);
         notification.warning(error.response.data.message);
       }
       console.log("error", error);
@@ -607,29 +762,44 @@ const deleteProduct = () => {
   axios
     .delete(`/group/${remove.id}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("AdminToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
     .then((res) => {
-      console.log(res.data.statusCode);
       notification.success("Guruh o'chirildi");
-      getProduct();
+      info.getGroup();
+      getProduct(store.pagination);
       remove.toggle = false;
     })
     .catch((error) => {
       if (error.response.data.statusCode == 400) {
-        console.log(error.response.data.message);
         notification.warning(error.response.data.message);
       } else if (error.response.data.statusCode == 401) {
-        console.log(error.response.data.message);
         notification.warning(error.response.data.message);
       }
-      console.log("error", error);
+      console.log(error);
+    });
+};
+
+const getGuard = () => {
+  axios
+    .delete("/staff/1", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    .then((res) => {})
+    .catch((error) => {
+      if (error.response.data.message == "Admin huquqi sizda yo'q!") {
+        store.guard = true;
+      }
     });
 };
 
 onMounted(() => {
-  getProduct();
+  getProduct(1);
+  getAllProduct();
+  getGuard();
 });
 </script>
 

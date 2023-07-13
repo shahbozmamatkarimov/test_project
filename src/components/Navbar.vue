@@ -31,7 +31,7 @@
         </div>
         <div class="flex items-center">
           <div class="flex items-center ml-3">
-            <ul class="flex items-center sm:gap-5 text-2xl">
+            <ul class="flex sm:gap-5 text-2xl">
               <li>
                 <div class="relative" @click="navbar.setMode()">
                   <b
@@ -55,28 +55,8 @@
                 </div>
               </li>
               <li>
-                <i class="bx bxs-bell pr-2 icon"></i>
-              </li>
-              <li>
-                <i class="bx bxs-dashboard pr-2 icon"></i>
-              </li>
-              <li>
                 <img
-                  @click="store.userToggle = !store.userToggle"
-                  class="w-8 h-8 rounded-full bg-gray-800 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 cursor-pointer"
-                  src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-                  alt="user"
-                />
-              </li>
-              <li>
-                <i class="bx bxs-bell pr-2 icon"></i>
-              </li>
-              <li>
-                <i class="bx bxs-dashboard pr-2 icon"></i>
-              </li>
-              <li>
-                <img
-                  @click="store.userToggle = !store.userToggle"
+                  @click="navbar.userInfo = !navbar.userInfo"
                   class="w-8 h-8 rounded-full bg-gray-800 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 cursor-pointer"
                   src="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
                   alt="user"
@@ -84,26 +64,27 @@
               </li>
             </ul>
             <div
-              v-show="store.userToggle"
-              @mousedown="store.userToggle = false"
-              class="absolute z-50 top-14 right-5 border-2 shadow-black text-base rounded-lg list-none divide-y divide-gray-100 shadow-md dark:divide-gray-600"
+              v-show="navbar.userInfo"
+              @click="navbar.userInfo = false"
+              class="absolute z-50 top-14 right-2 border-2 shadow-black text-base rounded-lg list-none divide-y divide-gray-100 shadow-md overflow-hidden"
               :class="
                 navbar.userNav
                   ? 'bg-[#203843] border-white shadow-white'
                   : 'bg-white'
               "
             >
-              <div class="px-4 py-3">
-                <p class="text-sm">Neil Sims</p>
-                <p class="text-sm font-medium truncate">
-                  neil.sims@flowbite.com
-                </p>
+              <div class="px-4 py-3 text-center">
+                <p class="text-lg font-bold">{{ store.guard }}</p>
               </div>
-              <ul class="py-1">
-                <li class="block px-4 py-2 text-sm">Dashboard</li>
-                <li class="block px-4 py-2 text-sm">Settings</li>
-                <li class="block px-4 py-2 text-sm">Earnings</li>
-                <li class="block px-4 py-2 text-sm">Sign out</li>
+              <ul class="py-1 font-medium">
+                <li class="block px-4 py-2 text-sm">
+                  <router-link to="/settings"
+                    ><i class="bx bxs-user-circle"></i> Profil</router-link
+                  >
+                </li>
+                <li @click="Logout" class="block px-4 py-2 text-sm hover:cursor-pointer">
+                  <i class="bx bx-log-out"></i> Log out
+                </li>
               </ul>
             </div>
           </div>
@@ -114,15 +95,46 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import { ref } from "vue";
 import { useNavStore } from "../stores/toggle.js";
 import { useSidebarStore } from "../stores/sidebar.js";
+import { useRouter } from "vue-router";
+import { onBeforeMount, reactive } from "vue";
+import axios from "../services/axios";
+const router = useRouter();
 const sidebar = useSidebarStore();
 const navbar = useNavStore();
 
 const store = reactive({
-  userToggle: false,
+  guard: "Admin",
+});
+
+const Logout = () => {
+  localStorage.removeItem("userId");
+  localStorage.removeItem("token");
+  router.push("/login");
+};
+
+const getGuard = () => {
+  const id = localStorage.getItem("userId");
+  axios
+    .get(`/staff/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+    .then((res) => {
+      store.guard = res.data.role[0].toUpperCase() + res.data.role.slice(1);
+    })
+    .catch((error) => {
+      console.log(error);
+      if (error.response.data.message == "Admin huquqi sizda yo'q!") {
+        store.guard = "o'qituvchi"; 
+      }
+    });
+};
+
+onBeforeMount(() => {
+  getGuard();
 });
 </script>
 

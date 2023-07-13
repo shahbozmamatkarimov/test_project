@@ -1,13 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import axios from "@/services/axios";
 import {
   HomeView,
   Dashboard,
   Students,
   Teachers,
-  Roles,
   Login,
   Error,
   Tests,
+  Settings,
+  Start_test,
   Groups,
   Results,
   SlugStudent,
@@ -15,9 +17,10 @@ import {
   SlugTests,
   SlugResults,
   SlugGroups,
-  SlugRoles,
   SlugSubjects,
   Subjects,
+  SlugStartTest,
+  SignupSuperAdmin
 } from '../views'
 
 const router = createRouter({
@@ -44,16 +47,6 @@ const router = createRouter({
           component: SlugTeachers,
         },
         {
-          path: '/roles',
-          name: 'roles',
-          component: Roles,
-        },
-        {
-          path: '/roles/:id/:name',
-          name: 'slug_roles',
-          component: SlugRoles,
-        },
-        {
           path: '/students',
           name: 'students',
           component: Students,
@@ -69,9 +62,24 @@ const router = createRouter({
           component: Tests,
         },
         {
+          path: '/start_test',
+          name: 'start_test',
+          component: Start_test,
+        },
+        {
+          path: '/start_test/start/:id',
+          name: 'slug_start_test',
+          component: SlugStartTest,
+        },
+        {
           path: '/subjects/:id/:name',
           name: 'slug_subjects',
           component: SlugSubjects,
+        },
+        {
+          path: '/subjects',
+          name: 'subjects',
+          component: Subjects,
         },
         {
           path: '/subjects',
@@ -89,7 +97,7 @@ const router = createRouter({
           component: Results,
         },
         {
-          path: '/results/:id/:name',
+          path: '/results/:id',
           name: 'slug_results',
           component: SlugResults,
         },
@@ -103,7 +111,22 @@ const router = createRouter({
           name: 'slug_groups',
           component: SlugGroups,
         },
+        {
+          path: '/tests/question/:name',
+          name: 'slug_questions',
+          component: SlugTests,
+        },
       ]
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: SignupSuperAdmin,
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: Settings,
     },
     {
       path: '/login',
@@ -117,5 +140,74 @@ const router = createRouter({
     },
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  try {
+    axios.get('staff/all')
+      .then((res) => {
+        if (res.data && to.name !== 'register') {
+          next({ name: 'register' })
+        } else if (!res.data && to.name !== 'login') {
+          axios.get('test-result', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          })
+            .then(res => {
+              next()
+            })
+            .catch(err => {
+              if (err.response.data.message == "Token vaqti tugagan!" && to.name !== 'login') {
+                next({ name: 'login' })
+              } else {
+                next()
+              }
+            })
+        } else {
+          next()
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+// router.beforeEach((to, from, next) => {
+//   return next({ name: "register" })
+//   try {
+//     axios.get('/staff/all')
+//       .then((res) => {
+//         if (!res.data) {
+//           axios.get('/staff', {
+//             headers: {
+//               Authorization: `Bearer ${localStorage.getItem("token")}`,
+//             },
+//           })
+//             .then(res => {
+//               // next()
+//             })
+//             .catch(err => {
+//               if (err.response.data.message == "Token vaqti tugagan!" && to.name !== 'login') {
+//                 // next({ name: 'login' })
+//               } else {
+//                 // next()
+//               }
+//             })
+//         }
+//         else if (to.name !== 'register') {
+//           console.log('object');
+//           // return next({ name: "register" })
+//         }
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       })
+//   } catch (error) {
+//     console.log(error, 'register');
+//   }
+// })
 
 export default router
